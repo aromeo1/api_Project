@@ -113,57 +113,6 @@ router.post('/', requireAuth, validateSpot, async (req, res) => {
 
 });
 
-router.put('/:id', requireAuth, validateSpot, async (req, res) => {
-
-    const { id } = req.params;
-    const { address, city, state, country, lat, lng, name, description, price } = req.body;
-
-    const spot = await Spot.findByPk(id);
-    if (!spot) {
-        return res.status(404);
-    }
-
-    if (spot.ownerId !== req.user.id) {
-        return res.status(403)
-    }
-
-    const updatedSpot = await spot.update({
-        address, 
-        city,
-        state,
-        country,
-        lat,
-        lng,
-        name,
-        description,
-        price,
-
-    });
-
-    return res.json(updatedSpot)
-
-});
-
-router.delete('/:id', requireAuth, async (req, res) => {
-
-    const { id } = req.params;
-
-    const spot = await Spot.findByPk(id);
-
-    if (!spot) {
-        return res.status(404);
-    }
-
-    if (spot.ownerId !== req.user.id) {
-        return res.status(403);
-    }
-
-    await spot.destroy();
-
-    return res.json({message: "Success"})
-
-});
-
 router.post('/:id/images', requireAuth, async (req, res) => {
 
     const {id} = req.params;
@@ -219,7 +168,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', requireAuth, validateSpot, async (req, res) => {
 
     const {id} = req.params;
-    const { address, city, state, country, lat, lng, name, description, price} = req.body
+    const { address, city, state, country, lat, lng, name, description, price} = req.body;
     const userId = req.user.id;
 
    try {
@@ -230,7 +179,7 @@ router.put('/:id', requireAuth, validateSpot, async (req, res) => {
         return res.status(404).json({message: "No spot"})
     }
 
-    if (spot.owerId !== userId) {
+    if (spot.ownerId !== userId) {
         return res.status(403).json({ message: "Forbidden"})
     }
 
