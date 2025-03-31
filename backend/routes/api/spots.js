@@ -1,5 +1,5 @@
 const express = require('express');
-const {Spot, SpotImage, User} = require('../../db/models');
+const {Spot, SpotImage, User, Review, ReviewImage} = require('../../db/models');
 const {check} = require('express-validator');
 const {handleValidationErrors} = require('../../utils/validation');
 const {requireAuth} = require('../../utils/auth');
@@ -62,6 +62,15 @@ const validateQueryFilters = [
         .withMessage('Size must be between 1 and 20'),
     handleValidationErrors
 ];
+
+const validateReview = [
+    check('review')
+        .exists({checkFalsy: true}),
+    check('stars')
+        .exists({checkFalsy: true})
+        .isInt({min: 1, max: 5}),
+    handleValidationErrors
+]
 
 router.get('/', validateQueryFilters, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -231,5 +240,50 @@ router.delete('/:id', requireAuth, async (req, res) => {
     }
     
 });
+
+router.get('/:spotId/reviews', async (req, res) => {
+    const { spotId } = req.params;
+
+    // Check if spot exists
+    const spot = await Spot.findByPk(spotId);
+    if (!spot) {
+        return res.status(404).json({ message: "Spot not found" });
+    }
+
+    // Query for reviews associated with the spot
+    const reviews = await Review.findAll({
+        where: { spotId },
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'username']
+            },
+            {
+                model: ReviewImage,
+                attributes: ['id', 'url']
+            },
+        ]
+    });
+
+    // Format response
+    const formattedReviews = reviews.map(review => ({
+        id: review.id,
+        reviewText: review.reviewText,
+        stars: review.stars,
+        user: {
+            id: review.User.id,
+            name: review.User.name,
+        },
+        reviewImages: review.ReviewImages.map(image => ({
+            id: image.id,
+            url: image.url,
+        })),
+    }));
+
+    // Return JSON response
+    return res.json({ reviews: formattedReviews });
+});
+
+
 
 module.exports = router;
