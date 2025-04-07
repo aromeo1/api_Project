@@ -66,7 +66,7 @@ router.get('/current', requireAuth, async (req, res) => {
           },
         ],
       });
-  
+
       // Format response to include previewImage field in Spot
       const formattedReviews = reviews.map(review => {
         const reviewData = review.toJSON();
