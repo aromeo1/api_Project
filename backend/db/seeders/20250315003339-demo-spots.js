@@ -31,7 +31,7 @@ module.exports = {
 
   const spots = await Spot.bulkCreate ([
     {
-      ownerId:  demoUser[0].id,
+      ownerId:  demoUser.id,
       address:  '95 3rd St 2nd Floor',
       city: 'San Francisco',
       state: 'CA',
