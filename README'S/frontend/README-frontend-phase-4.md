@@ -562,6 +562,8 @@ Begin by removing the `LoginFormPage` component from the `App` component.
 
 Here's an example of what __App.jsx__ should look like now:
 
+
+
 ```jsx
 // frontend/src/App.jsx
 
