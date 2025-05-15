@@ -81,7 +81,13 @@ router.get('/', validateQueryFilters, async (req, res) => {
 
     const spots = await Spot.findAll ({
         limit: size,
-        offset: offset
+        offset: offset,
+        include: [
+            {
+                model: SpotImage,
+                attributes: ['url', 'preview']
+            }
+        ]
     });
 
    return res.json({spots, page, size});
