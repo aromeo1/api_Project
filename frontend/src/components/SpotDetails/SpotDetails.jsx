@@ -39,14 +39,19 @@ function SpotDetails() {
 
   return (
     <div className="spot-details">
-      <h2>{spot.name}</h2>
-      {mainImage && (
-        <img src={mainImage} alt= {spot.name} className='spot-main-image'/>
-      )}
-      <p>{spot.city}, {spot.state}, {spot.country}</p>
-      <p>{spot.description}</p>
-      <p>Hosted by: {spot.Owner ? `${spot.Owner.firstName} ${spot.Owner.lastName}` : 'Unknown'}</p>
-      <p>Price: ${spot.price} night</p>
+      <div className="spot-main-info">
+        <h2>{spot.name}</h2>
+        {mainImage && (
+          <img src={mainImage} alt={spot.name} className='spot-main-image' />
+        )}
+        <p>{spot.city}, {spot.state}, {spot.country}</p>
+        <p>{spot.description}</p>
+        <p>Hosted by: {spot.Owner ? `${spot.Owner.firstName} ${spot.Owner.lastName}` : 'Unknown'}</p>
+      </div>
+      <div className="spot-callout-box">
+        <p className="spot-price">${spot.price} night</p>
+        <button className="reserve-button" onClick={() => alert('<Feature coming soon>')}>Reserve</button>
+      </div>
     </div>
   );
 }

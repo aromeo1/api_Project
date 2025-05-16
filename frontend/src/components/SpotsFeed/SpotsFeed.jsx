@@ -35,7 +35,6 @@ function SpotsFeed() {
         <p>No spots available.</p>
       ) : (
         spots.map(spot => {
-          // Determine image URL from spot data
           const imageUrl = spot.previewImage || (spot.SpotImages && spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null);
 
           return (
@@ -52,6 +51,11 @@ function SpotsFeed() {
               <p className="spot-location">{spot.city}, {spot.state}</p>
               <p>{spot.description}</p>
               <p>Price: ${spot.price}</p>
+              {spot.Reviews && spot.Reviews.length > 0 ? (
+              <p className="spot-rating">
+                 Rating: {(
+                    spot.Reviews.reduce((sum, review) => sum + review.stars, 0) / spot.Reviews.length).toFixed(1)} ★ &middot; ({spot.Reviews.length} {spot.Reviews.length === 1 ? 'Review' : 'Reviews'})</p>
+                    ) : (<p className="spot-rating">New</p>)}
             </div>
           </Link>
           

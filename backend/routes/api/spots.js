@@ -77,7 +77,6 @@ router.get('/', validateQueryFilters, async (req, res) => {
     const size = parseInt(req.query.size) || 20;
 
     const offset = (page - 1) * size; // adjust the page index 
-                    
 
     const spots = await Spot.findAll ({
         limit: size,
