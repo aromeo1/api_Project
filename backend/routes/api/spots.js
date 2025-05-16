@@ -86,6 +86,10 @@ router.get('/', validateQueryFilters, async (req, res) => {
             {
                 model: SpotImage,
                 attributes: ['url', 'preview']
+            },
+            {
+                model: Review,
+                attributes: ['id', 'review', 'stars', 'spotId']
             }
         ]
     });
@@ -170,7 +174,19 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const spot = await Spot.findByPk(id);
+        const spot = await Spot.findByPk(id, {
+            include: [
+                {
+                    model: SpotImage,
+                    attributes: ['url', 'preview']
+                },
+                {
+                    model: User,
+                    as: 'Owner',
+                    attributes: ['firstName', 'lastName']
+                }
+            ]
+        });
         if (!spot) {
             return res.status(404).json({ message: "Spot not found" });
         }

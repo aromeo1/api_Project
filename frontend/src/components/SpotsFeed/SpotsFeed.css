@@ -18,3 +18,7 @@
     padding: 10px;
     box-sizing: border-box;
 }
+.spot-card-link {
+    text-decoration: none;
+    color: inherit;
+}

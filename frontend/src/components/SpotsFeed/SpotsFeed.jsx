@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './SpotsFeed.css';
 
 function SpotsFeed() {
@@ -38,7 +39,8 @@ function SpotsFeed() {
           const imageUrl = spot.previewImage || (spot.SpotImages && spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null);
 
           return (
-            <div key={spot.id} className="spot-card" title={spot.name}>
+            <Link key={spot.id} to={`/spots/${spot.id}`} className="spot-card-link" title={spot.name}>
+            <div className="spot-card">
               {imageUrl && (
                 <img
                   src={imageUrl}
@@ -49,8 +51,10 @@ function SpotsFeed() {
               <h3>{spot.name}</h3>
               <p className="spot-location">{spot.city}, {spot.state}</p>
               <p>{spot.description}</p>
-              <p>Price: ${spot.price} night</p>
+              <p>Price: ${spot.price}</p>
             </div>
+          </Link>
+          
           );
         })
       )}
