@@ -101,7 +101,13 @@ router.get('/current', requireAuth, async (req, res) => {
     try {
         const userId = req.user.id; // Get current user ID
         const spots = await Spot.findAll({
-            where: { ownerId: userId }
+            where: { ownerId: userId },
+            include: [
+                {
+                    model: SpotImage,
+                    attributes: ['url', 'preview']
+                }
+            ]
         });
 
         return res.json({ spots });
@@ -198,7 +204,13 @@ router.get('/:id', async (req, res) => {
         if (!spot) {
             return res.status(404).json({ message: "Spot not found" });
         }
-        return res.json(spot);
+
+
+        const spotJson = spot.toJSON();
+        const previewImageObj = spotJson.SpotImages.find(img => img.preview === true);
+        spotJson.previewImage = previewImageObj ? previewImageObj.url : null;
+
+        return res.json(spotJson);
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" });
     }

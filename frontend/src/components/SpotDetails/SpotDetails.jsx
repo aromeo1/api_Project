@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import OpenModalButton from '../OpenModalButton/OpenModalButton';
+import ReviewFormModal from '../ReviewModal/ReviewFormModal';
 import './SpotDetails.css';
+
 
 function SpotDetails() {
   const { spotId } = useParams();
@@ -163,30 +166,10 @@ function SpotDetails() {
           ))
         )}
         {sessionUser && (
-          <form className="review-form" onSubmit={handleReviewSubmit}>
-            <h3>Post Your Review</h3>
-            {formError && <p className="form-error">{formError}</p>}
-            <label>
-              Review:
-              <textarea
-                value={newReview}
-                onChange={(e) => setNewReview(e.target.value)}
-                rows="4"
-                required
-              />
-            </label>
-            <label>
-              Stars:
-              <select value={newStars} onChange={(e) => setNewStars(Number(e.target.value))}>
-                {[5,4,3,2,1].map((star) => (
-                  <option key={star} value={star}>{star}</option>
-                ))}
-              </select>
-            </label>
-            <button type="submit" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Submit Review'}
-            </button>
-          </form>
+          <OpenModalButton
+            buttonText="Post Your Review"
+            modalComponent={<ReviewFormModal spot={spot} />}
+          />
         )}
       </div>
     </div>

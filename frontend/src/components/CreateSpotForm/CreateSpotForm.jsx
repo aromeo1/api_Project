@@ -1,17 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './CreateSpotForm.css';
 
-function CreateSpotForm({ onClose }) {
-  const [country, setCountry] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [description, setDescription] = useState('');
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [previewImage, setPreviewImage] = useState('');
-  const [imageUrls, setImageUrls] = useState(['', '', '', '']);
-  const [errors, setErrors] = useState([]);
+function CreateSpotForm({
+  onClose,
+  initialData = {},
+  onSubmit,
+  formTitle = 'Create a new Spot',
+  submitButtonText = 'Create Spot',
+  imageUrlsOptional = false,
+  errors: externalErrors = [],
+  setErrors: setExternalErrors,
+  showOptionalFields = true,
+}) {
+  const [country, setCountry] = useState(initialData.country || '');
+  const [address, setAddress] = useState(initialData.address || '');
+  const [city, setCity] = useState(initialData.city || '');
+  const [state, setState] = useState(initialData.state || '');
+  const [lat, setLat] = useState(initialData.lat || '');
+  const [lng, setLng] = useState(initialData.lng || '');
+  const [description, setDescription] = useState(initialData.description || '');
+  const [name, setName] = useState(initialData.name || '');
+  const [price, setPrice] = useState(initialData.price || '');
+  const [previewImage, setPreviewImage] = useState(initialData.previewImage || '');
+  const [imageUrls, setImageUrls] = useState(initialData.imageUrls || ['', '', '', '']);
+  const [localErrors, setLocalErrors] = useState([]);
+
+  useEffect(() => {
+    setCountry(initialData.country || '');
+    setAddress(initialData.address || '');
+    setCity(initialData.city || '');
+    setState(initialData.state || '');
+    setLat(initialData.lat || '');
+    setLng(initialData.lng || '');
+    setDescription(initialData.description || '');
+    setName(initialData.name || '');
+    setPrice(initialData.price || '');
+    setPreviewImage(initialData.previewImage || '');
+    setImageUrls(initialData.imageUrls || ['', '', '', '']);
+  }, [initialData]);
 
   const handleImageUrlChange = (index, value) => {
     const newImageUrls = [...imageUrls];
@@ -21,7 +47,8 @@ function CreateSpotForm({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors([]);
+    setLocalErrors([]);
+    if (setExternalErrors) setExternalErrors([]);
 
     const validationErrors = [];
     if (!country) validationErrors.push('Country is required');
@@ -32,12 +59,15 @@ function CreateSpotForm({ onClose }) {
     if (!name) validationErrors.push('Name is required');
     if (!price || isNaN(price) || Number(price) <= 0) validationErrors.push('Price must be a positive number');
 
+    if (!previewImage) validationErrors.push('Preview Image URL is required');
+
     if (validationErrors.length > 0) {
-      setErrors(validationErrors);
+      setLocalErrors(validationErrors);
+      if (setExternalErrors) setExternalErrors(validationErrors);
       return;
     }
 
-    const newSpot = {
+    const formData = {
       country,
       address,
       city,
@@ -45,57 +75,32 @@ function CreateSpotForm({ onClose }) {
       description,
       name,
       price: Number(price),
+      previewImage,
+      imageUrls: imageUrlsOptional ? imageUrls : [],
     };
 
-    try {
-      const response = await fetch('/api/spots', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newSpot),
-      });
+    if (showOptionalFields) {
+      formData.lat = lat ? Number(lat) : null;
+      formData.lng = lng ? Number(lng) : null;
+    }
 
-      if (!response.ok) {
-        const data = await response.json();
-        setErrors([data.message || 'Failed to create spot']);
-        return;
-      }
-
-      const spotData = await response.json();
-
-      // Upload images
-      const imagesToUpload = [previewImage, ...imageUrls].filter(url => url.trim() !== '');
-      for (let i = 0; i < imagesToUpload.length; i++) {
-        const imgUrl = imagesToUpload[i];
-        await fetch(`/api/spots/${spotData.spot.id}/images`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            url: imgUrl,
-            preview: i === 0,
-          }),
-        });
-      }
-
-      if (onClose) onClose();
-
-    } catch (error) {
-      setErrors(['An unexpected error occurred']);
+    if (onSubmit) {
+      await onSubmit(formData);
     }
   };
 
   return (
     <div className="spot-details-container">
       <form className="create-spot-form" onSubmit={handleSubmit}>
-        <h2>Create a new Spot</h2>
+        <h2>{formTitle}</h2>
 
-        {errors.length > 0 && (
+        {(localErrors.length > 0 || externalErrors.length > 0) && (
           <ul className="form-errors">
-            {errors.map((error, idx) => (
-              <li key={idx}>{error}</li>
+            {localErrors.map((error, idx) => (
+              <li key={`local-${idx}`}>{error}</li>
+            ))}
+            {externalErrors.map((error, idx) => (
+              <li key={`external-${idx}`}>{error}</li>
             ))}
           </ul>
         )}
@@ -148,6 +153,32 @@ function CreateSpotForm({ onClose }) {
             />
           </label>
         </div>
+
+        {showOptionalFields && (
+          <div className="lat-lng-row">
+            <label>
+              Latitude
+              <input
+                type="number"
+                step="any"
+                placeholder="Latitude"
+                value={lat}
+                onChange={(e) => setLat(e.target.value)}
+              />
+            </label>
+
+            <label>
+              Longitude
+              <input
+                type="number"
+                step="any"
+                placeholder="Longitude"
+                value={lng}
+                onChange={(e) => setLng(e.target.value)}
+              />
+            </label>
+          </div>
+        )}
 
         <h3>Describe your place to guests</h3>
         <p>Mention the best features of your space, any special amenities like fast wifi or parking, and what you love about the neighborhood.</p>
@@ -203,19 +234,21 @@ function CreateSpotForm({ onClose }) {
           />
         </label>
 
-        {imageUrls.map((url, idx) => (
-          <label key={idx}>
-            Image URL
-            <input
-              type="text"
-              placeholder="Image URL"
-              value={url}
-              onChange={(e) => handleImageUrlChange(idx, e.target.value)}
-            />
-          </label>
-        ))}
+        {imageUrlsOptional
+          ? imageUrls.map((url, idx) => (
+              <label key={idx}>
+                Image URL
+                <input
+                  type="text"
+                  placeholder="Image URL"
+                  value={url}
+                  onChange={(e) => handleImageUrlChange(idx, e.target.value)}
+                />
+              </label>
+            ))
+          : null}
 
-        <button type="submit" className="create-spot-submit-button">Create Spot</button>
+        <button type="submit" className="create-spot-submit-button">{submitButtonText}</button>
       </form>
     </div>
   );

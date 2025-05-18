@@ -7,6 +7,8 @@ import LoginFormPage from './components/LoginFormPage/LoginFormPage';
 import SpotsFeed from './components/SpotsFeed/SpotsFeed';
 import SpotDetails from './components/SpotDetails/SpotDetails';
 import CreateSpotForm from './components/CreateSpotForm/CreateSpotForm';
+import ManageSpots from './components/ManageSpots/ManageSpots';
+import UpdateSpotForm from './components/UpdateSpotForm/UpdateSpotForm';
 
 function Layout() {
   const dispatch = useDispatch();
@@ -45,7 +47,15 @@ const router = createBrowserRouter([
       {
         path: '/spots/new',
         element: <CreateSpotForm />
-      }      
+      },
+      {
+        path: '/manage-spots',
+        element: <ManageSpots />
+      },
+      {
+        path: '/spots/:spotId/edit',
+        element: <UpdateSpotForm />
+      }
     ]
   }
 ]);
