@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './CreateSpotForm.css';
 
 function CreateSpotForm({
@@ -25,18 +25,41 @@ function CreateSpotForm({
   const [imageUrls, setImageUrls] = useState(initialData.imageUrls || ['', '', '', '']);
   const [localErrors, setLocalErrors] = useState([]);
 
+  const prevInitialDataRef = useRef();
+
   useEffect(() => {
-    setCountry(initialData.country || '');
-    setAddress(initialData.address || '');
-    setCity(initialData.city || '');
-    setState(initialData.state || '');
-    setLat(initialData.lat || '');
-    setLng(initialData.lng || '');
-    setDescription(initialData.description || '');
-    setName(initialData.name || '');
-    setPrice(initialData.price || '');
-    setPreviewImage(initialData.previewImage || '');
-    setImageUrls(initialData.imageUrls || ['', '', '', '']);
+    const prevInitialData = prevInitialDataRef.current;
+
+    // Only update state if initialData changed
+    const isDifferent =
+      !prevInitialData ||
+      prevInitialData.country !== initialData.country ||
+      prevInitialData.address !== initialData.address ||
+      prevInitialData.city !== initialData.city ||
+      prevInitialData.state !== initialData.state ||
+      prevInitialData.lat !== initialData.lat ||
+      prevInitialData.lng !== initialData.lng ||
+      prevInitialData.description !== initialData.description ||
+      prevInitialData.name !== initialData.name ||
+      prevInitialData.price !== initialData.price ||
+      prevInitialData.previewImage !== initialData.previewImage ||
+      JSON.stringify(prevInitialData.imageUrls) !== JSON.stringify(initialData.imageUrls);
+
+    if (isDifferent) {
+      setCountry(initialData.country || '');
+      setAddress(initialData.address || '');
+      setCity(initialData.city || '');
+      setState(initialData.state || '');
+      setLat(initialData.lat || '');
+      setLng(initialData.lng || '');
+      setDescription(initialData.description || '');
+      setName(initialData.name || '');
+      setPrice(initialData.price || '');
+      setPreviewImage(initialData.previewImage || '');
+      setImageUrls(initialData.imageUrls || ['', '', '', '']);
+    }
+
+    prevInitialDataRef.current = initialData;
   }, [initialData]);
 
   const handleImageUrlChange = (index, value) => {

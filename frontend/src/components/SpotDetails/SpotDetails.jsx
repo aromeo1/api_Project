@@ -5,18 +5,11 @@ import OpenModalButton from '../OpenModalButton/OpenModalButton';
 import ReviewFormModal from '../ReviewModal/ReviewFormModal';
 import './SpotDetails.css';
 
-
 function SpotDetails() {
   const { spotId } = useParams();
   const [spot, setSpot] = useState(null);
   const [loading, setLoading] = useState(true);
   const sessionUser = useSelector(state => state.session.user);
-
-  // New state for review form
-  const [newReview, setNewReview] = useState('');
-  const [newStars, setNewStars] = useState(5);
-  const [formError, setFormError] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchSpotDetails() {
@@ -53,66 +46,9 @@ function SpotDetails() {
     ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(1)
     : null;
 
-  // Handler for review form submission
-  const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    setFormError(null);
-    if (!newReview.trim()) {
-      setFormError('Review text cannot be empty.');
-      return;
-    }
-    if (newStars < 1 || newStars > 5) {
-      setFormError('Stars must be between 1 and 5.');
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const response = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          review: newReview,
-          stars: newStars,
-          spotId: spot.id,
-        }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        setFormError(errorData.message || 'Failed to post review.');
-        setSubmitting(false);
-        return;
-      }
-      const createdReview = await response.json();
-      // Add new review to spot.Reviews
-      const userReview = {
-        id: createdReview.id,
-        review: createdReview.review,
-        stars: createdReview.stars,
-        User: {
-          firstName: sessionUser.firstName,
-        },
-        createdAt: new Date().toISOString(),
-      };
-      setSpot({
-        ...spot,
-        Reviews: [...reviews, userReview],
-      });
-      setNewReview('');
-      setNewStars(5);
-      setFormError(null);
-    } catch (error) {
-      setFormError('An error occurred while posting the review.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   const isOwner = sessionUser && spot.Owner && sessionUser.id === spot.Owner.id;
   const noReviews = reviews.length === 0;
   const showFirstReviewMessage = sessionUser && !isOwner && noReviews;
-
 
   return (
     <div className="spot-details-container">
@@ -165,7 +101,7 @@ function SpotDetails() {
             </div>
           ))
         )}
-        {sessionUser && (
+        {sessionUser && !isOwner && (
           <OpenModalButton
             buttonText="Post Your Review"
             modalComponent={<ReviewFormModal spot={spot} />}

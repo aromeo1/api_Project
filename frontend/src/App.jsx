@@ -6,9 +6,10 @@ import * as sessionActions from './store/session';
 import LoginFormPage from './components/LoginFormPage/LoginFormPage';
 import SpotsFeed from './components/SpotsFeed/SpotsFeed';
 import SpotDetails from './components/SpotDetails/SpotDetails';
-import CreateSpotForm from './components/CreateSpotForm/CreateSpotForm';
+import CreateSpotPage from './components/CreateSpotPage/CreateSpotPage';
 import ManageSpots from './components/ManageSpots/ManageSpots';
 import UpdateSpotForm from './components/UpdateSpotForm/UpdateSpotForm';
+import { ModalProvider, Modal } from './components/context/Modal';
 
 function Layout() {
   const dispatch = useDispatch();
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/spots/new',
-        element: <CreateSpotForm />
+        element: <CreateSpotPage />
       },
       {
         path: '/manage-spots',
@@ -61,7 +62,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ModalProvider>
+      <RouterProvider router={router} />
+      <Modal />
+    </ModalProvider>
+  );
 }
 
 export default App;

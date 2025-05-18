@@ -8,10 +8,7 @@ const { Op } = require('sequelize');
 const router = express.Router();
 
 const validateSpot = [
-    check('ownerId')
-        .exists({checkFalsy: true})
-        .isInt()
-        .withMessage('Invalid OwnerId'),
+    // Removed ownerId validation because ownerId is set server-side from req.user.id
     check('address')
         .exists({checkFalsy: true})
         .isString()
@@ -29,11 +26,11 @@ const validateSpot = [
         .isString()
         .withMessage('Please provide a valid country'),
     check('lat')
-        .exists({checkFalsy: true})
+        .optional()
         .isFloat({min: -90, max: 90})
         .withMessage('Please provide a valid latitude'),
     check('lng')
-        .exists({checkFalsy: true})
+        .optional()
         .isFloat({min: -180, max: 180})
         .withMessage('Please provide a valid longitude'),
     check('name')
@@ -188,7 +185,7 @@ router.get('/:id', async (req, res) => {
                 {
                     model: User,
                     as: 'Owner',
-                    attributes: ['firstName', 'lastName']
+                    attributes: ['id', 'firstName', 'lastName']
                 },
                 {
                     model: Review,
