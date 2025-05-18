@@ -15,17 +15,22 @@
   margin: 0;
   padding: 0;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
 .nav-item {
-  margin-left: 10px;
+  margin-left: 200px;
 }
 .nav-item:last-child {
   margin-right: 0;
 }
 
 .profile-button{
+  margin-left: 0;
+}
+
+.create-spot-button {
   margin-left: auto;
 }
 

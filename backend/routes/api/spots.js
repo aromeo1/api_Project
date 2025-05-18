@@ -183,6 +183,15 @@ router.get('/:id', async (req, res) => {
                     model: User,
                     as: 'Owner',
                     attributes: ['firstName', 'lastName']
+                },
+                {
+                    model: Review,
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'firstName', 'lastName']
+                        }
+                    ]
                 }
             ]
         });
@@ -261,50 +270,5 @@ router.delete('/:id', requireAuth, async (req, res) => {
     }
     
 });
-
-router.get('/:spotId/reviews', async (req, res) => {
-    const { spotId } = req.params;
-
-    // Check if spot exists
-    const spot = await Spot.findByPk(spotId);
-    if (!spot) {
-        return res.status(404).json({ message: "Spot not found" });
-    }
-
-    // Query for reviews associated with the spot
-    const reviews = await Review.findAll({
-        where: { spotId },
-        include: [
-            {
-                model: User,
-                attributes: ['id', 'username']
-            },
-            {
-                model: ReviewImage,
-                attributes: ['id', 'url']
-            },
-        ]
-    });
-
-    // Format response
-    const formattedReviews = reviews.map(review => ({
-        id: review.id,
-        reviewText: review.reviewText,
-        stars: review.stars,
-        user: {
-            id: review.User.id,
-            name: review.User.name,
-        },
-        reviewImages: review.ReviewImages.map(image => ({
-            id: image.id,
-            url: image.url,
-        })),
-    }));
-
-    // Return JSON response
-    return res.json({ reviews: formattedReviews });
-});
-
-
 
 module.exports = router;

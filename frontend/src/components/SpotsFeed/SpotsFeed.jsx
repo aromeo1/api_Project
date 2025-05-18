@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SpotsFeed.css';
 
@@ -39,26 +39,27 @@ function SpotsFeed() {
 
           return (
             <Link key={spot.id} to={`/spots/${spot.id}`} className="spot-card-link" title={spot.name}>
-            <div className="spot-card">
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt={spot.name}
-                  className="spot-image"
-                />
-              )}
-              <h3>{spot.name}</h3>
-              <p className="spot-location">{spot.city}, {spot.state}</p>
-              <p>{spot.description}</p>
-              <p>Price: ${spot.price}</p>
-              {spot.Reviews && spot.Reviews.length > 0 ? (
-              <p className="spot-rating">
-                 Rating: {(
-                    spot.Reviews.reduce((sum, review) => sum + review.stars, 0) / spot.Reviews.length).toFixed(1)} ★ &middot; ({spot.Reviews.length} {spot.Reviews.length === 1 ? 'Review' : 'Reviews'})</p>
-                    ) : (<p className="spot-rating">New</p>)}
-            </div>
-          </Link>
-          
+              <div className="spot-card" title={spot.name}>
+                {imageUrl && (
+                  <div className="spot-image-container">
+                    <img
+                      src={imageUrl}
+                      alt={spot.name}
+                      className="spot-image"
+                    />
+                    <p className="spot-location">{spot.city}, {spot.state}</p>
+                  </div>
+                )}
+                <p>{spot.description}</p>
+                <p>Price: ${spot.price}</p>
+                {spot.Reviews && spot.Reviews.length > 0 ? (
+                  <p className="spot-rating">
+                    Rating: {(
+                      spot.Reviews.reduce((sum, review) => sum + review.stars, 0) / spot.Reviews.length).toFixed(1)} ★ &middot; ({spot.Reviews.length} {spot.Reviews.length === 1 ? 'Review' : 'Reviews'})
+                  </p>
+                ) : (<p className="spot-rating">New</p>)}
+              </div>
+            </Link>
           );
         })
       )}
