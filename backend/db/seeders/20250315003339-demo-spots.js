@@ -26,11 +26,11 @@ module.exports = {
 
   
 
-  const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
+  // const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
 
   const spots = await Spot.bulkCreate ('Spots', [
     {
-      ownerId:  demoUser.id,
+      ownerId:  1,
       address:  '95 3rd St 2nd Floor',
       city: 'San Francisco',
       state: 'CA',
@@ -43,7 +43,7 @@ module.exports = {
 
     },
     {
-      ownerId: demoUser.id,
+      ownerId: 1,
       address: '4565 Sunny dr',
       city: 'Los Angeles',
       state: "CA",
@@ -55,7 +55,7 @@ module.exports = {
       price: 29000
     },
     {
-      ownerId: demoUser.id,
+      ownerId: 1,
       address: '987 Lookout Mountain Rd',
       city: 'Golden',
       state: "CO",
