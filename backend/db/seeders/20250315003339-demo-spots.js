@@ -8,6 +8,7 @@ let options = {};
 if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;
 }
+options.tableName = 'Spots';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -27,7 +28,7 @@ module.exports = {
   
 
     const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
-    options.tableName = 'Spots';
+
   const spots = await Spot.bulkCreate (options, [
     {
       ownerId:  demoUser.id,
@@ -68,7 +69,7 @@ module.exports = {
 
     }
   ], { validate: true});
-  options.tableName='SpotImages';
+
   await SpotImage.bulkCreate(options, [
     {
       spotId: spots[0].id,
@@ -95,11 +96,9 @@ async down (queryInterface, Sequelize) {
    * await queryInterface.bulkDelete('People', null, {});
    */
   const Op = Sequelize.Op;
-  options.tableName= 'SpotImages';
   await queryInterface.bulkDelete(options, {
     spotId: {[Op.ne]: null}
   });
-  options.tableName= 'Spots';
   await queryInterface.bulkDelete(options, {
     name: { [ Op.in]: ['App Academy', 'Sunny Store', 'Lookout Mountain Park']}
   });
