@@ -67,7 +67,7 @@ module.exports = {
       price: 29000
 
     }
-  ], { validate: true, ...options});
+  ], { validate: true});
 
   await SpotImage.bulkCreate('SpotImages', [
     {
@@ -85,7 +85,7 @@ module.exports = {
       url: 'https://example.com/test-image.jpg',
       preview: true
     }
-  ], options);
+  ], {validate: true});
 },
 async down (queryInterface, Sequelize) {
     const Op = Sequelize.Op;
