@@ -8,7 +8,7 @@ let options = {};
 if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;
 }
-
+options.tableName = 'Spots';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
 
     const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
 
-  const spots = await Spot.bulkCreate ([
+  const spots = await Spot.bulkCreate (options, [
     {
       ownerId:  demoUser.id,
       address:  '95 3rd St 2nd Floor',
@@ -68,9 +68,9 @@ module.exports = {
       price: 29000
 
     }
-  ], { validate: true, ...options});
+  ], { validate: true});
 
-  await SpotImage.bulkCreate([
+  await SpotImage.bulkCreate(options, [
     {
       spotId: spots[0].id,
       url: 'https://example.com/test-image.jpg',
@@ -86,7 +86,7 @@ module.exports = {
       url: 'https://example.com/test-image.jpg',
       preview: true
     }
-  ], options);
+  ]);
 },
 async down (queryInterface, Sequelize) {
   /**
