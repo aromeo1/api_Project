@@ -96,13 +96,13 @@ async down (queryInterface, Sequelize) {
    * await queryInterface.bulkDelete('People', null, {});
    */
   const Op = Sequelize.Op;
-  await queryInterface.bulkDelete('SpotImages', {
+  await queryInterface.bulkDelete(options, {
     spotId: {[Op.ne]: null}
-  }, options);
+  });
 
-  await queryInterface.bulkDelete('Spots', {
+  await queryInterface.bulkDelete(options, {
     name: { [ Op.in]: ['App Academy', 'Sunny Store', 'Lookout Mountain Park']}
-  }, options);
+  });
   
 }
 };
