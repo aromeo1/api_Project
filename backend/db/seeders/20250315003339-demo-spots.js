@@ -27,8 +27,8 @@ module.exports = {
   
 
   // const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
-
-  const spots = await Spot.bulkCreate ('Spots', [
+console.log('Hello');
+  const spots = await Spot.bulkCreate([
     {
       ownerId:  1,
       address:  '95 3rd St 2nd Floor',
@@ -69,7 +69,9 @@ module.exports = {
     }
   ], { validate: true});
 
-  await SpotImage.bulkCreate('SpotImages', [
+  console.log(spots);
+
+  await SpotImage.bulkCreate([
     {
       spotId: spots[0].id,
       url: 'https://example.com/test-image.jpg',
