@@ -8,7 +8,6 @@ let options = {};
 if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;
 }
-options.tableName = 'Spots';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -29,7 +28,7 @@ module.exports = {
 
     const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
 
-  const spots = await Spot.bulkCreate (options, [
+  const spots = await Spot.bulkCreate ('Spots', [
     {
       ownerId:  demoUser.id,
       address:  '95 3rd St 2nd Floor',
@@ -68,9 +67,9 @@ module.exports = {
       price: 29000
 
     }
-  ], { validate: true});
+  ], { validate: true, ...options});
 
-  await SpotImage.bulkCreate(options, [
+  await SpotImage.bulkCreate('SpotImages', [
     {
       spotId: spots[0].id,
       url: 'https://example.com/test-image.jpg',
@@ -86,22 +85,19 @@ module.exports = {
       url: 'https://example.com/test-image.jpg',
       preview: true
     }
-  ]);
+  ], options);
 },
 async down (queryInterface, Sequelize) {
-  /**
-   * Add commands to revert seed here.
-   *
-   * Example:
-   * await queryInterface.bulkDelete('People', null, {});
-   */
-  const Op = Sequelize.Op;
-  await queryInterface.bulkDelete(options, {
-    spotId: {[Op.ne]: null}
-  });
-  await queryInterface.bulkDelete(options, {
-    name: { [ Op.in]: ['App Academy', 'Sunny Store', 'Lookout Mountain Park']}
-  });
-  
-}
+    const Op = Sequelize.Op;
+
+    options.tableName = 'SpotImages';
+    await queryInterface.bulkDelete(options, {
+      spotId: { [Op.ne]: null }
+    });
+
+    options.tableName = 'Spots';
+    await queryInterface.bulkDelete(options, {
+      name: { [Op.in]: ['App Academy', 'Sunny Store', 'Lookout Mountain Park'] }
+    });
+  }
 };
