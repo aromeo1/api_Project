@@ -35,6 +35,7 @@ function ProfileButton({ user }) {
   const logout = (e) => {
     e.preventDefault();
     dispatch(sessionActions.logout());
+    setShowMenu(false);
     navigate('/');
   };
 
@@ -52,7 +53,7 @@ function ProfileButton({ user }) {
             <li>{user.username}</li>
             <li>{user.email}</li>
             <li>
-              <button onClick={() => navigate('/manage-spots')}>Manage Spots</button>
+              <button onClick={() => { navigate('/manage-spots'); setShowMenu(false); }}>Manage Spots</button>
             </li>
             <li>
               <button onClick={logout}>Log Out</button>
@@ -63,12 +64,14 @@ function ProfileButton({ user }) {
             <li>
               <OpenModalButton
                 buttonText="Log In"
+                onClick={() => setShowMenu(false)}
                 modalComponent={<LoginFormModal />}
               />
             </li>
             <li>
               <OpenModalButton
                 buttonText="Sign Up"
+                onClick={() => setShowMenu(false)}
                 modalComponent={<SignupFormModal />}
               />
             </li>

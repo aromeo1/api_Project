@@ -8,7 +8,6 @@ import './ManageSpots.css';
 function ManageSpots() {
   const [spots, setSpots] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [spotToDelete, setSpotToDelete] = useState(null);
   const { setModalContent, closeModal } = useModal();
   const navigate = useNavigate();
 
@@ -19,8 +18,8 @@ function ManageSpots() {
         if (!response.ok) {
           throw new Error('Failed to fetch user spots');
         }
-        const data = await response.json();
-        setSpots(data.spots || []);
+        const json = await response.json();
+        setSpots(json.spots || []);
       } catch (error) {
         console.error(error);
       } finally {
@@ -31,43 +30,35 @@ function ManageSpots() {
     fetchUserSpots();
   }, []);
 
-  const confirmDelete = (spot) => {
-    console.log('Confirm delete called for spot id:', spot.id);
-    setSpotToDelete(spot);
+  const confirmDelete = (spotId) => {
     setModalContent(
       <ConfirmDeleteModal
-        onConfirm={handleDelete}
+        onConfirm={() => handleDelete(spotId)}
         onCancel={() => {
-          setSpotToDelete(null);
           closeModal();
         }}
       />
     );
   };
 
-  const handleDelete = async () => {
-    if (!spotToDelete) return;
-    try {
-      console.log('Sending DELETE request for spot id:', spotToDelete.id);
-      const response = await csrfFetch(`/api/spots/${spotToDelete.id}`, {
-        method: 'DELETE',
-      });
-      console.log('Response status:', response.status);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Failed to delete spot:', errorText);
-        throw new Error('Failed to delete spot');
+  const handleDelete = async (spotId) => {
+      try {
+        const response = await csrfFetch(`/api/spots/${spotId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Failed to delete spot:', errorText);
+          throw new Error('Failed to delete spot');
+        }
+        await response.json();
+        setSpots(spots.filter(spot => spot.id !== spotId));
+        closeModal();
+        navigate('/'); // Navigate to home page after deletion
+      } catch (error) {
+        console.error('Error deleting spot:', error);
+        alert('Error deleting spot');
       }
-      const data = await response.json();
-      console.log('Delete response data:', data);
-      setSpots(spots.filter(spot => spot.id !== spotToDelete.id));
-      setSpotToDelete(null);
-      closeModal();
-      navigate('/'); // Navigate to home page after deletion
-    } catch (error) {
-      console.error('Error deleting spot:', error);
-      alert('Error deleting spot');
-    }
   };
 
   const handleUpdate = (spotId) => {
@@ -86,12 +77,12 @@ function ManageSpots() {
         <p>You have no spots yet.</p>
       ) : (
         <div className="spots-feed">
-          {spots.map((spot, index) => {
+          {spots.map((spot) => {
             const imageUrl = spot.previewImage || (spot.SpotImages && spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null);
 
             return (
               <Link key={spot.id} to={`/spots/${spot.id}`} className="spot-card-link" title={spot.name}>
-                <div className="spot-card" title={spot.name} data-index={index}>
+                <div className="spot-card" title={spot.name}>
                   {imageUrl && (
                     <div className="spot-image-container">
                       <img
@@ -112,7 +103,7 @@ function ManageSpots() {
                   ) : (<p className="spot-rating">New</p>)}
                   <div className="spot-actions">
                     <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleUpdate(spot.id); }} className="update-button">Update</button>
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); confirmDelete(spot); }} className="delete-button">Delete</button>
+                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); confirmDelete(spot.id); }} className="delete-button">Delete</button>
                   </div>
                 </div>
               </Link>

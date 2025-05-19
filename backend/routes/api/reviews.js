@@ -17,7 +17,6 @@ const validateReview = [
 ]
 
 router.post('/', requireAuth, validateReview, async (req, res) => {
-    console.log('Incoming request body:', req.body); // Log the incoming request body
     const { review, stars, spotId } = req.body;
 
     // Create new Review

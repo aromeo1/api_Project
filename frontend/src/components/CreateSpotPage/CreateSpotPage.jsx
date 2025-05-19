@@ -10,10 +10,14 @@ function CreateSpotPage() {
   const handleCreateSpot = async (formData) => {
     setErrors([]);
     try {
+      // Extract image URLs from formData
+      const { previewImage, imageUrls, ...spotData } = formData;
+
+      // Create the spot first
       const response = await csrfFetch('/api/spots', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(spotData),
       });
 
       if (!response.ok) {
@@ -29,7 +33,44 @@ function CreateSpotPage() {
       }
 
       const data = await response.json();
-      navigate(`/spots/${data.spot.id}`);
+      const spotId = data.spot.id;
+
+      // Upload preview image
+      if (previewImage) {
+        const previewResponse = await csrfFetch(`/api/spots/${spotId}/images`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: previewImage,
+            preview: true,
+          }),
+        });
+        if (!previewResponse.ok) {
+          setErrors(prev => [...prev, 'Failed to upload preview image']);
+        }
+      }
+
+      // Upload other images
+      if (imageUrls && imageUrls.length > 0) {
+        for (const url of imageUrls) {
+          if (url && url.trim() !== '') {
+            const imageResponse = await csrfFetch(`/api/spots/${spotId}/images`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                url: url.trim(),
+                preview: false,
+              }),
+            });
+            if (!imageResponse.ok) {
+              setErrors(prev => [...prev, `Failed to upload image: ${url}`]);
+            }
+          }
+        }
+      }
+
+      // After all images uploaded, navigate to spot details page
+      navigate(`/spots/${spotId}`);
     } catch (error) {
       setErrors([error.message || 'Failed to create spot']);
     }

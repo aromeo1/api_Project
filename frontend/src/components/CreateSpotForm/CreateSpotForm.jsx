@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import './CreateSpotForm.css';
 
 function CreateSpotForm({
-  onClose,
   initialData = {},
   onSubmit,
   formTitle = 'Create a new Spot',

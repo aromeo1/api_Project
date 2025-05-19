@@ -4,7 +4,7 @@ import './ReviewModal.css';
 
 function ReviewModal({ spot, onClose }) {
   const sessionUser = useSelector(state => state.session.user);
-  const [reviews, setReviews] = useState(spot.Reviews || []);
+  const [reviews] = useState(spot.Reviews || []);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const [newReview, setNewReview] = useState('');
