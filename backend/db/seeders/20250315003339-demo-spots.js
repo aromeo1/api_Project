@@ -26,7 +26,7 @@ module.exports = {
 
   
 
-    const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
+  const demoUser = await User.findOne ({ where: { username: 'Demo-lition'}});
 
   const spots = await Spot.bulkCreate ('Spots', [
     {
