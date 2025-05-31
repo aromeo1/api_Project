@@ -43,8 +43,7 @@ function SpotDetails() {
 
   const reviews = spot.Reviews || [];
   const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(1)
-    : null;
+    ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(1) : null;
 
   const isOwner = sessionUser && spot.Owner && sessionUser.id === spot.Owner.id;
   const noReviews = reviews.length === 0;
@@ -81,7 +80,7 @@ function SpotDetails() {
             ) : (
               <p>New</p>
             )}
-            <button className="reserve-button" onClick={() => alert('Feature Coming Soon...')}>Reserve</button>
+            <button className="reserve-button" onClick={() => alert('<Feature Coming Soon>')}>Reserve</button>
           </div>
         </div>
       </div>
