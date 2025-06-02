@@ -6,6 +6,7 @@ import * as sessionActions from '../../store/session';
 import './SignupForm.css';
 
 function SignupFormModal() {
+  //State hook for input fields
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ function SignupFormModal() {
   const isDisabled = !email || !firstName || !lastName || !username || !password || !confirmPassword || password !== confirmPassword || username.length < 4 || password < 6;
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     if (password === confirmPassword) {
       setErrors({});
       return dispatch(
