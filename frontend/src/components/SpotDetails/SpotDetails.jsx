@@ -11,6 +11,7 @@ function SpotDetails() {
   const [loading, setLoading] = useState(true);
   const sessionUser = useSelector(state => state.session.user);
 
+  // Use effect to fetch spot details when spotId changes
   useEffect(() => {
     async function fetchSpotDetails() {
       try {
@@ -38,13 +39,15 @@ function SpotDetails() {
     return <div>Spot not found.</div>;
   }
 
+  //Main Image is preview image, if no preview image then first image from spot images
   const mainImage = spot.previewImage || (spot.SpotImages && spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null);
-  const otherImages = spot.SpotImages ? spot.SpotImages.filter(img => img.url !== mainImage).slice(0, 4) : [];
+  const otherImages = spot.SpotImages ? spot.SpotImages.filter(img => img.url !== mainImage).slice(0, 4) : []; //limited to 4
 
+  // Calculating average review score to one decimal place
   const reviews = spot.Reviews || [];
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(1) : null;
+  const averageRating = reviews.length > 0 ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(1) : null;
 
+    // Checks if current user is the owner of the spot
   const isOwner = sessionUser && spot.Owner && sessionUser.id === spot.Owner.id;
   const noReviews = reviews.length === 0;
   const showFirstReviewMessage = sessionUser && !isOwner && noReviews;
@@ -73,6 +76,7 @@ function SpotDetails() {
         <div className="spot-reserve-box">
           <p className="spot-price">${spot.price} night</p>
           <div className="spot-rating-reserve">
+            {/* Show average rating and number of reviews if available, otherwise show 'New' */}
             {averageRating ? (
               <p>
                 <span className="star">★</span> {averageRating} · {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
@@ -95,11 +99,12 @@ function SpotDetails() {
           noReviews ? <p>No reviews yet.</p> : reviews.map((review) => (
             <div key={review.id} className="review">
               <p className="reviewer-name">{review.User ? review.User.firstName : 'Anonymous'}</p>
-              <p className="review-date">{new Date(review.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
+              <p className="review-date">{new Date(review.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}</p> {/* Review date formatted as Month Year */}
               <p className="review-text">{review.review}</p>
             </div>
           ))
         )}
+        {/* Conditionally render "Post Your Review" button and modal only if user is logged in and not the owner */}
         {sessionUser && !isOwner && (
           <OpenModalButton
             buttonText="Post Your Review"
