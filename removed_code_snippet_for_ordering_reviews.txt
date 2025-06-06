@@ -1,0 +1,40 @@
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const spot = await Spot.findByPk(id, {
+            include: [
+                {
+                    model: SpotImage,
+                    attributes: ['url', 'preview']
+                },
+                {
+                    model: User,
+                    as: 'Owner',
+                    attributes: ['id', 'firstName', 'lastName']
+                },
+                {
+                    model: Review,
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'firstName', 'lastName']
+                        }
+                    ]
+                }
+            ],
+            order: [[Review, 'createdAt', 'DESC']]
+        });
+        if (!spot) {
+            return res.status(404).json({ message: "Spot not found" });
+        }
+
+        const spotJson = spot.toJSON();
+        const previewImageObj = spotJson.SpotImages.find(img => img.preview === true);
+        spotJson.previewImage = previewImageObj ? previewImageObj.url : null;
+
+        return res.json(spotJson);
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});

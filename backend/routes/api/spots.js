@@ -196,7 +196,8 @@ router.get('/:id', async (req, res) => {
                         }
                     ]
                 }
-            ]
+            ],
+            order: [[Review, 'createdAt', 'DESC']]
         });
         if (!spot) {
             return res.status(404).json({ message: "Spot not found" });
@@ -279,5 +280,28 @@ router.delete('/:id', requireAuth, async (req, res) => {
     }
     
 });
+
+router.delete('/:id/images', requireAuth, async (req, res) =>{
+    
+    const {id} = req.params;
+    const userId = req.user.id;
+
+    try{
+        const spot = await Spot.findByPk(id);
+        if (!spot) {
+            return res.status(404).json({message: "No spot"})
+            }
+        if (spot.ownerId !== userId) {
+            return res.status(403).json({message: "Forbidden" })
+        }
+        await SpotImage.destroy({
+            where: { spotId: id }
+        });
+        return res.json({message: "Sucess"});
+        }
+        catch (error) {
+            return res.status(500).json({message: "There was an error"})
+            }
+        });
 
 module.exports = router;
