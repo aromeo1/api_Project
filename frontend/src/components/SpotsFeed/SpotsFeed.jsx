@@ -56,7 +56,7 @@ function SpotsFeed() {
                   </div>
                 )}
                 <p>{spot.description}</p>
-                <p>Price: ${spot.price}</p>
+                <p>${spot.price} night</p>
                 {spot.Reviews && spot.Reviews.length > 0 ? (
                   // Display average rating and number of reviews
                   <p className="spot-rating">

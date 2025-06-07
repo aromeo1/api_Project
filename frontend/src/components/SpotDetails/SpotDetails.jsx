@@ -52,6 +52,9 @@ function SpotDetails() {
   const noReviews = reviews.length === 0;
   const showFirstReviewMessage = sessionUser && !isOwner && noReviews;
 
+  //Checks if user has already reviewed the spot
+  const reviewedAlready = sessionUser && reviews.some(review => review.userId === sessionUser.id);
+
   return (
     <div className="spot-details-container">
       <div className="spot-header">
@@ -105,7 +108,7 @@ function SpotDetails() {
           ))
         )}
         {/* Conditionally render "Post Your Review" button and modal only if user is logged in and not the owner */}
-        {sessionUser && !isOwner && (
+        {sessionUser && !isOwner && !reviewedAlready &&(
           <OpenModalButton
             buttonText="Post Your Review"
             modalComponent={<ReviewFormModal spot={spot} />}

@@ -19,11 +19,13 @@ function Navigation({ isLoaded }) {
       <ul className="nav-list">
         {isLoaded && (
           <>
+          {sessionUser && (
             <li className="nav-item create-spot-button">
               <button onClick={handleCreateSpotClick}>
                 Create Spot
               </button>
             </li>
+             )}
             <li className="nav-item profile-button">
               <ProfileButton user={sessionUser } />
             </li>

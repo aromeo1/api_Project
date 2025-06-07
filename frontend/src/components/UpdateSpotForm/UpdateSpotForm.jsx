@@ -117,7 +117,7 @@ function UpdateSpotForm() {
         });
       }
 
-      navigate('/manage-spots');
+      navigate(`/spots/${spotId}`);
     } catch (error) {
       setErrors({ submit: 'An unexpected error occurred' });
     }
