@@ -25,7 +25,7 @@ function Navigation({ isLoaded }) {
                 Create Spot
               </button>
             </li>
-             )}
+          )}
             <li className="nav-item profile-button">
               <ProfileButton user={sessionUser } />
             </li>

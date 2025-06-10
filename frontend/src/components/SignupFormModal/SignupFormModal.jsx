@@ -16,7 +16,7 @@ function SignupFormModal() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
-  const isDisabled = !email || !firstName || !lastName || !username || !password || !confirmPassword  || username.length < 4 || password < 6;
+  const isDisabled = !email || !firstName || !lastName || !username || !password || !confirmPassword || username.length < 4 || password < 6;
 
   const handleSubmit = (e) => {
     e.preventDefault(); 
@@ -57,7 +57,7 @@ function SignupFormModal() {
             required
           />
         </label>
-        {errors.email && <p>{errors.email}</p>}
+        {errors.email && <p>{errors.email}</p>}{/*Prints errors in html*/}
         <label>
           Username
           <input
@@ -67,7 +67,7 @@ function SignupFormModal() {
             required
           />
         </label>
-        {errors.username && <p>{errors.username}</p>}
+        {errors.username && <p>{errors.username}</p>}{/*Prints errors in html*/}
         <label>
           First Name
           <input
@@ -77,7 +77,7 @@ function SignupFormModal() {
             required
           />
         </label>
-        {errors.firstName && <p>{errors.firstName}</p>}
+        {errors.firstName && <p>{errors.firstName}</p>}{/*Prints errors in html*/}
         <label>
           Last Name
           <input
@@ -87,7 +87,7 @@ function SignupFormModal() {
             required
           />
         </label>
-        {errors.lastName && <p>{errors.lastName}</p>}
+        {errors.lastName && <p>{errors.lastName}</p>}{/*Prints errors in html*/}
         <label>
           Password
           <input
@@ -97,7 +97,7 @@ function SignupFormModal() {
             required
           />
         </label>
-        {errors.password && <p>{errors.password}</p>}
+        {errors.password && <p>{errors.password}</p>}{/*Prints errors in html*/}
         <label>
           Confirm Password
           <input
